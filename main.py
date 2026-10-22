@@ -23,3 +23,7 @@ i = df["high"].idxmax(); j = df["low"].idxmin()
 print("Đỉnh", df.loc[i, "high"], df.loc[i, "date"].date(), "| Đáy", df.loc[j, "low"], df.loc[j, "date"].date())
 r = df["high"] - df["low"]; k = r.idxmax()
 print("Biên độ trong ngày lớn nhất", r[k], df.loc[k, "date"].date())
+
+
+from latex_export import export_tables
+export_tables(df)
