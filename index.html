@@ -6,23 +6,23 @@
   <title>Mô phỏng giá cổ phiếu ABC</title>
 
   <style>
-    /* ===== 1. Màu sắc: khai báo một lần, dùng lại nhiều lần bằng var(...) ===== */
+    /* ===== 1. Màu sắc: khai báo một lần, dùng lại bằng var(...) ===== */
     :root {
-      --xanh-dam: #1e3a8a;
-      --xanh: #2563eb;
-      --nen: #f3f5f9;
-      --chu: #1f2937;
-      --chu-phu: #6b7280;
-      --tang: #16a34a;   /* xanh lá: giá tăng */
-      --giam: #dc2626;   /* đỏ: giá giảm */
-      --tran: #9333ea;   /* tím: giá trần */
-      --san: #0ea5e9;    /* xanh dương: giá sàn */
-      --tham-chieu: #eab308; /* vàng: giá tham chiếu */
+      --nen: #0f172a;        /* nền tối giống bảng điện chứng khoán */
+      --the: #1e293b;
+      --vien: #334155;
+      --chu: #e2e8f0;
+      --chu-phu: #94a3b8;
+      --tang: #22c55e;       /* xanh lá: tăng */
+      --giam: #ef4444;       /* đỏ: giảm */
+      --tran: #a855f7;       /* tím: trần */
+      --san: #38bdf8;        /* xanh dương: sàn */
+      --tham-chieu: #facc15; /* vàng: tham chiếu */
     }
 
     /* ===== 2. Giao diện chung ===== */
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }           /* bấm menu thì cuộn mượt */
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
       font-family: "Segoe UI", Roboto, sans-serif;
@@ -30,114 +30,140 @@
       color: var(--chu);
       line-height: 1.6;
     }
-    .khung { max-width: 920px; margin: 0 auto; padding: 0 1rem; }
+    .khung { max-width: 940px; margin: 0 auto; padding: 0 1rem; }
 
-    /* ===== 3. Phần đầu trang ===== */
+
+    /* ===== 4. Phần đầu trang ===== */
     header {
       text-align: center;
-      padding: 2.5rem 1rem 2rem;
-      background: linear-gradient(135deg, var(--xanh-dam), var(--xanh));
-      color: #fff;
+      padding: 3rem 1rem 2.5rem;
+      background: radial-gradient(circle at 50% 0%, #1e3a8a 0%, transparent 70%);
     }
-    header .truong { font-size: .9rem; opacity: .85; margin: 0; }
-    header h1 { margin: .4rem 0; font-size: 2rem; }
+    header .truong { margin: 0; font-size: .9rem; color: var(--chu-phu); }
+    header h1 {
+      margin: .4rem 0;
+      font-size: clamp(1.7rem, 5vw, 2.6rem);
+      background: linear-gradient(90deg, var(--tang), var(--san), var(--tran));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;                    /* chữ chuyển màu cầu vồng */
+    }
     header .sv {
       display: inline-block;
       margin-top: .6rem;
       padding: .3rem 1rem;
+      border: 1px solid var(--vien);
       border-radius: 999px;
-      background: rgba(255, 255, 255, .18);
     }
 
-    /* ===== 4. Thanh menu (dính ở đầu trang khi cuộn) ===== */
+    /* nến trang trí: các cột nhảy lên xuống */
+    .nen-trang-tri { display: flex; justify-content: center; align-items: flex-end; gap: 6px; height: 60px; margin-top: 1.2rem; }
+    .nen-trang-tri i {
+      width: 10px;
+      border-radius: 2px;
+      background: var(--tang);
+      animation: nhay 1.6s ease-in-out infinite alternate;
+    }
+    .nen-trang-tri i:nth-child(even) { background: var(--giam); animation-duration: 2.1s; }
+    .nen-trang-tri i:nth-child(3n)   { background: var(--tran); animation-duration: 1.3s; }
+    @keyframes nhay {
+      from { height: 10px; }
+      to   { height: 55px; }
+    }
+
+    /* ===== 5. Menu dính ===== */
     nav {
-      position: sticky;
-      top: 0;
-      z-index: 5;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 1.2rem;
+      position: sticky; top: 0; z-index: 5;
+      display: flex; justify-content: center; flex-wrap: wrap; gap: 1.2rem;
       padding: .7rem;
-      background: #fff;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
+      background: rgba(15, 23, 42, .9);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--vien);
     }
-    nav a { color: var(--xanh-dam); text-decoration: none; font-weight: 600; }
-    nav a:hover { color: var(--xanh); text-decoration: underline; }
+    nav a { color: var(--chu-phu); text-decoration: none; font-weight: 600; }
+    nav a:hover { color: var(--chu); }
 
-    /* ===== 5. Thẻ nội dung ===== */
+    /* ===== 6. Thẻ nội dung ===== */
     section {
-      background: #fff;
+      background: var(--the);
+      border: 1px solid var(--vien);
       border-radius: 14px;
       padding: 1.2rem 1.4rem 1.4rem;
-      margin: 1.4rem 0;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, .08);
+      margin: 1.6rem 0;
     }
     h2 {
       margin-top: 0;
       font-size: 1.25rem;
-      color: var(--xanh-dam);
-      border-left: 5px solid var(--xanh);
+      border-left: 5px solid var(--san);
       padding-left: .6rem;
     }
     .mo-ta { color: var(--chu-phu); margin-top: -.4rem; }
-    img, video {
-      display: block;
-      width: 100%;
-      max-width: 100%;
-      margin: 0 auto;
-      border-radius: 8px;
-    }
+    img, video { display: block; width: 100%; border-radius: 8px; }
+    img { background: #fff; }
     video { background: #000; }
 
-    /* ===== 6. Các ô số liệu nổi bật ===== */
-    .o-so {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); /* tự xuống dòng khi màn hình hẹp */
-      gap: 1rem;
-    }
+    /* hiệu ứng hiện dần khi cuộn tới */
+    .an { opacity: 0; transform: translateY(24px); transition: all .7s; }
+    .an.hien { opacity: 1; transform: none; }
+
+    /* ===== 7. Ô số liệu ===== */
+    .o-so { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; }
     .o-so div {
       text-align: center;
       padding: 1rem .5rem;
       border-radius: 12px;
       background: var(--nen);
-      border-top: 4px solid var(--xanh);
+      transition: transform .2s;
     }
-    .o-so b { display: block; font-size: 1.6rem; }
+    .o-so div:hover { transform: translateY(-5px); }
+    .o-so b { display: block; font-size: 1.7rem; }
     .o-so span { font-size: .85rem; color: var(--chu-phu); }
 
-    /* ===== 7. Chú thích màu ===== */
-    .chu-thich { display: flex; flex-wrap: wrap; gap: .5rem 1.2rem; margin-top: .8rem; font-size: .9rem; }
-    .cham {
-      display: inline-block;
-      width: .8rem; height: .8rem;
-      border-radius: 50%;
-      margin-right: .3rem;
+    /* ===== 8. Chọn tháng ===== */
+    .nut-thang { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
+    .nut-thang button {
+      width: 3rem; padding: .4rem 0;
+      border: 1px solid var(--vien);
+      border-radius: 8px;
+      background: var(--nen);
+      color: var(--chu);
+      cursor: pointer;
+      font-family: inherit;
     }
+    .nut-thang button:hover { border-color: var(--san); }
+    .nut-thang button.chon { background: var(--san); color: #0f172a; font-weight: 700; }
+    #thong-tin-thang { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .8rem; }
+    #thong-tin-thang div { background: var(--nen); border-radius: 10px; padding: .7rem; text-align: center; }
+    #thong-tin-thang b { display: block; font-size: 1.2rem; }
+    #thong-tin-thang span { font-size: .8rem; color: var(--chu-phu); }
 
-    footer { text-align: center; color: var(--chu-phu); font-size: .9rem; padding: 1.5rem 1rem 2rem; }
+    
   </style>
 </head>
 
 <body>
-  <!-- ===== Đầu trang ===== -->
+ 
+
   <header>
     <p class="truong">Đại học Đà Nẵng · Trường Đại học Sư phạm · Khoa Toán - Tin</p>
     <h1>Mô phỏng biến động giá cổ phiếu ABC</h1>
     <span class="sv">Nguyễn Trương Quỳnh Nhi – 3110525029 – 25CKDL</span>
+    <!-- các cột nến trang trí, mỗi thẻ <i> là một cột -->
+    <div class="nen-trang-tri">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
   </header>
 
-  <!-- ===== Menu: href="#id" sẽ nhảy tới phần có id tương ứng ===== -->
   <nav>
     <a href="#video">Video</a>
     <a href="#tong-quan">Tổng quan</a>
-    <a href="#thang">Theo tháng</a>
-    <a href="#nua-nam">Nửa năm</a>
+    <a href="#chon-thang">Chọn tháng</a>
+    <a href="#bieu-do">Biểu đồ</a>
   </nav>
 
   <main class="khung">
 
-    <section id="video">
+    <section id="video" class="an">
       <h2>Video mô phỏng</h2>
       <p class="mo-ta">Trên: nến Nhật theo ngày. Dưới: đường giá và dải biến động.</p>
       <video src="out/abc.mp4" controls></video>
@@ -150,30 +176,91 @@
       </div>
     </section>
 
-    <section id="tong-quan">
+    <section id="tong-quan" class="an">
       <h2>Tổng quan cả năm</h2>
+      <!-- data-dich là số cần đếm tới, JavaScript bên dưới sẽ đếm từ 0 -->
       <div class="o-so">
-        <div><b style="color:var(--tang)">89.988</b><span>Giá cao nhất (VND)</span></div>
-        <div><b style="color:var(--giam)">4.333</b><span>Giá thấp nhất (VND)</span></div>
-        <div><b style="color:var(--xanh)">Tháng 9</b><span>Biến động mạnh nhất</span></div>
-        <div><b style="color:var(--tran)">16.362</b><span>Biên độ ngày lớn nhất</span></div>
+        <div><b style="color:var(--tang)" data-dich="89988">0</b><span>Giá cao nhất (VND)</span></div>
+        <div><b style="color:var(--giam)" data-dich="4333">0</b><span>Giá thấp nhất (VND)</span></div>
+        <div><b style="color:var(--tham-chieu)">Tháng 9</b><span>Biến động mạnh nhất</span></div>
+        <div><b style="color:var(--tran)" data-dich="16362">0</b><span>Biên độ ngày lớn nhất</span></div>
       </div>
     </section>
 
-    <section id="thang">
+    <section id="chon-thang" class="an">
+      <h2>Chọn một tháng để xem số liệu</h2>
+      <div class="nut-thang" id="nut-thang"></div>
+      <div id="thong-tin-thang"></div>
+    </section>
+
+    <section id="bieu-do" class="an">
       <h2>Giá trung bình mỗi tháng</h2>
       <img src="out/bar_thang.png" alt="Biểu đồ cột giá trung bình mỗi tháng">
       <h2 style="margin-top:1.5rem">Boxplot giá mỗi tháng</h2>
       <img src="out/box_thang.png" alt="Boxplot giá mỗi tháng">
-    </section>
-
-    <section id="nua-nam">
-      <h2>Phân bố giá nửa đầu và nửa cuối năm</h2>
+      <h2 style="margin-top:1.5rem">Phân bố giá nửa đầu và nửa cuối năm</h2>
       <img src="out/hist_nua_nam.png" alt="Histogram phân bố giá">
     </section>
 
   </main>
 
   <footer>Bài tập môn Python · numpy · pandas · matplotlib</footer>
+
+  <script>
+    /* ===== 1. Đếm số tăng dần cho các ô có data-dich ===== */
+    document.querySelectorAll('[data-dich]').forEach(function (o) {
+      var dich = Number(o.dataset.dich);
+      var bat_dau = null;
+      function chay(t) {
+        if (bat_dau === null) bat_dau = t;
+        var tiendo = Math.min((t - bat_dau) / 1500, 1);        // chạy trong 1,5 giây
+        o.textContent = Math.round(dich * tiendo).toLocaleString('vi-VN');
+        if (tiendo < 1) requestAnimationFrame(chay);
+      }
+      requestAnimationFrame(chay);
+    });
+
+    /* ===== 2. Chọn tháng =====
+       Mỗi dòng: [tháng, trung bình, độ lệch chuẩn, cao nhất, thấp nhất, biên độ] */
+    var du_lieu = [
+      [1, 8454, 1794, 12988, 4812, 8177],   [2, 6338, 851, 8498, 4333, 4165],
+      [3, 9192, 2417, 15377, 5768, 9609],   [4, 11351, 821, 14540, 8828, 5713],
+      [5, 14144, 2474, 21814, 8214, 13600], [6, 14744, 1979, 20951, 10547, 10404],
+      [7, 22402, 3198, 29530, 14597, 14933],[8, 36614, 9865, 64581, 23847, 40733],
+      [9, 55253, 12040, 89988, 34527, 55461],[10, 44364, 3460, 53613, 33994, 19619],
+      [11, 27336, 4675, 41133, 18010, 23122],[12, 28206, 3967, 39356, 19769, 19586]
+    ];
+    var khung_nut = document.getElementById('nut-thang');
+    var khung_tin = document.getElementById('thong-tin-thang');
+
+    function hien_thi(r) {
+      var dinh = Math.max.apply(null, du_lieu.map(function (x) { return x[5]; }));
+      var ghi_chu = r[5] === dinh ? ' (mạnh nhất năm!)' : '';
+      khung_tin.innerHTML =
+        '<div><b>' + r[1].toLocaleString('vi-VN') + '</b><span>Trung bình</span></div>' +
+        '<div><b>' + r[2].toLocaleString('vi-VN') + '</b><span>Độ lệch chuẩn</span></div>' +
+        '<div><b style="color:var(--tang)">' + r[3].toLocaleString('vi-VN') + '</b><span>Cao nhất</span></div>' +
+        '<div><b style="color:var(--giam)">' + r[4].toLocaleString('vi-VN') + '</b><span>Thấp nhất</span></div>' +
+        '<div><b style="color:var(--tham-chieu)">' + r[5].toLocaleString('vi-VN') + '</b><span>Biên độ' + ghi_chu + '</span></div>';
+    }
+
+    du_lieu.forEach(function (r) {
+      var nut = document.createElement('button');
+      nut.textContent = r[0];
+      nut.onclick = function () {
+        khung_nut.querySelectorAll('button').forEach(function (b) { b.classList.remove('chon'); });
+        nut.classList.add('chon');
+        hien_thi(r);
+      };
+      khung_nut.appendChild(nut);
+    });
+    khung_nut.children[8].click();            // mở sẵn tháng 9
+
+    /* ===== 3. Hiện dần các phần khi cuộn tới ===== */
+    var theo_doi = new IntersectionObserver(function (ds) {
+      ds.forEach(function (e) { if (e.isIntersecting) e.target.classList.add('hien'); });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.an').forEach(function (s) { theo_doi.observe(s); });
+  </script>
 </body>
 </html>
